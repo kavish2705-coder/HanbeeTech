@@ -453,8 +453,8 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
           </motion.div>
 
           <motion.a 
-            whileHover={{ x: 8, color: 'var(--color-accent-blue)' }} 
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            whileHover={{ x: 5, color: 'var(--color-accent-blue)' }} 
+            transition={{ type: "spring", stiffness: 200, damping: 25 }}
             href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" 
             style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid var(--color-accent-blue)', paddingBottom: '4px' }}
           >
@@ -472,8 +472,8 @@ function StepCard({ number, title, description, subtitle }) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      whileHover={{ scale: 1.02, y: -5, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ scale: 1.01, y: -2, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }}
+      transition={{ type: "spring", stiffness: 200, damping: 25 }}
       className="glass-panel"
       style={{ padding: '3rem', flex: 1, display: 'flex', flexDirection: 'column', cursor: 'default' }}
     >
@@ -489,8 +489,8 @@ function FeatureCard({ icon: Icon, title, description }) {
   return (
     <motion.div 
       className="glass-panel" 
-      whileHover={{ scale: 1.03, y: -5, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={{ scale: 1.02, y: -2, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }}
+      transition={{ type: "spring", stiffness: 200, damping: 25 }}
       style={{ padding: '2rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start', cursor: 'default' }}
     >
       <div style={{ background: 'var(--color-accent-glow)', padding: '1rem', borderRadius: '12px', color: 'var(--color-accent-blue)' }}>
@@ -592,8 +592,9 @@ function App() {
             <motion.a whileHover={{ color: '#ffffff' }} href="#healthcare" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Healthcare</motion.a>
             <motion.a whileHover={{ color: '#ffffff' }} href="#hospitality" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Hospitality</motion.a>
             <motion.a 
-              whileHover={{ scale: 1.05, boxShadow: '0 5px 15px rgba(255, 255, 255, 0.1)' }} 
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03, boxShadow: '0 5px 15px rgba(255, 255, 255, 0.1)' }} 
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 200, damping: 25 }}
               href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" className="glass-panel" 
               style={{ padding: '0.5rem 1.5rem', borderRadius: '20px', color: '#fff', textDecoration: 'none' }}
             >
@@ -803,9 +804,9 @@ function App() {
             </p>
             <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
               <motion.a 
-                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }} 
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.02, y: -2, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }} 
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" className="glass-panel" 
                 style={{ padding: '2rem 3rem', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', minWidth: '260px', textAlign: 'center' }}
               >
@@ -814,9 +815,9 @@ function App() {
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.3' }}>On-site demo available</div>
               </motion.a>
               <motion.a 
-                whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }} 
-                whileTap={{ scale: 0.95 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.02, y: -2, boxShadow: '0 20px 40px rgba(255, 255, 255, 0.08)' }} 
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
                 href="https://wa.me/919344477512" target="_blank" rel="noreferrer" className="glass-panel" 
                 style={{ padding: '2rem 3rem', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', minWidth: '260px', textAlign: 'center' }}
               >

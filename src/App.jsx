@@ -286,14 +286,14 @@ function Hero3DScene() {
 
     // ═══ LIGHTS — smooth continuous fade ═══
     if (rimLightRef.current) {
-      rimLightRef.current.intensity = ease5(clamp01(t / 3)) * 12;
+      rimLightRef.current.intensity = ease5(clamp01(t / 3)) * 8;
     }
 
     if (sweepLightRef.current) {
       const sweepP = clamp01(t / 7);
       const easedSweep = sweepP < 0.5 ? 2 * sweepP * sweepP : 1 - Math.pow(-2 * sweepP + 2, 2) / 2;
       sweepLightRef.current.position.x = -12 + easedSweep * 24 + (sweepP >= 1 ? Math.sin(t * 0.3) * 3 : 0);
-      sweepLightRef.current.intensity = ease5(clamp01(t / 1.5)) * 2.5 + (sweepP >= 1 ? Math.sin(t * 0.4) * 0.3 : 0);
+      sweepLightRef.current.intensity = ease5(clamp01(t / 1.5)) * 1.8 + (sweepP >= 1 ? Math.sin(t * 0.4) * 0.3 : 0);
     }
   });
 
@@ -302,7 +302,7 @@ function Hero3DScene() {
       <Environment preset="night" environmentIntensity={0.3} />
 
       {/* Ambient — enough to see the models */}
-      <ambientLight intensity={0.15} color="#ffffff" />
+      <ambientLight intensity={0.1} color="#ffffff" />
 
       {/* Dramatic backlight rim (the signature car-ad look) */}
       <spotLight
@@ -327,10 +327,10 @@ function Hero3DScene() {
       />
 
       {/* Key light — centered so it doesn't specifically target the left hospital screen */}
-      <directionalLight position={[0, 12, 5]} intensity={1.5} color="#ffffff" />
+      <directionalLight position={[0, 12, 5]} intensity={0.9} color="#ffffff" />
       {/* Soft fill lights from both sides for balance */}
-      <directionalLight position={[-8, 8, 2]} intensity={0.4} color="#e0f0ff" />
-      <directionalLight position={[8, 8, 2]} intensity={0.4} color="#e0f0ff" />
+      <directionalLight position={[-8, 8, 2]} intensity={0.2} color="#e0f0ff" />
+      <directionalLight position={[8, 8, 2]} intensity={0.2} color="#e0f0ff" />
 
 
       {/* ── TokenFlow (Center, slightly back) ── */}
@@ -415,9 +415,9 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
             gl={{ antialias: true, alpha: true }}
           >
             <Environment preset="studio" environmentIntensity={0.5} />
-            <ambientLight intensity={0.2} color="#ffffff" />
-            <directionalLight position={[5, 10, 5]} intensity={1.5} color="#ffffff" />
-            <directionalLight position={[-5, 5, 5]} intensity={0.5} color="#e0f0ff" />
+            <ambientLight intensity={0.1} color="#ffffff" />
+            <directionalLight position={[5, 10, 5]} intensity={0.9} color="#ffffff" />
+            <directionalLight position={[-5, 5, 5]} intensity={0.25} color="#e0f0ff" />
             <Suspense fallback={null}>
               <ShowcaseModel path={model} scale={10} position={mPos} />
             </Suspense>

@@ -91,8 +91,8 @@ function NeuralConstellation() {
 
       // Glow halo
       const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, sz * 4);
-      glow.addColorStop(0, `rgba(0, 210, 255, ${alpha * 0.3})`);
-      glow.addColorStop(1, 'rgba(0, 210, 255, 0)');
+      glow.addColorStop(0, `rgba(123, 162, 144, ${alpha * 0.3})`);
+      glow.addColorStop(1, 'rgba(123, 162, 144, 0)');
       ctx.fillStyle = glow;
       ctx.fillRect(p.x - sz * 4, p.y - sz * 4, sz * 8, sz * 8);
 
@@ -125,9 +125,9 @@ function NeuralConstellation() {
     // ── Slow Horizontal Scan Line ──
     const scanY = (t * 40) % H;
     const scanGrad = ctx.createLinearGradient(0, scanY - 30, 0, scanY + 30);
-    scanGrad.addColorStop(0, 'rgba(0, 210, 255, 0)');
-    scanGrad.addColorStop(0.5, 'rgba(0, 210, 255, 0.03)');
-    scanGrad.addColorStop(1, 'rgba(0, 210, 255, 0)');
+    scanGrad.addColorStop(0, 'rgba(123, 162, 144, 0)');
+    scanGrad.addColorStop(0.5, 'rgba(123, 162, 144, 0.03)');
+    scanGrad.addColorStop(1, 'rgba(123, 162, 144, 0)');
     ctx.fillStyle = scanGrad;
     ctx.fillRect(0, scanY - 30, W, 60);
 
@@ -385,7 +385,7 @@ function SectionHeading({ title, subtitle }) {
 function MetricCard({ value, label }) {
   return (
     <div className="glass-panel" style={{ padding: '1.5rem 1rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'var(--color-accent-blue)', marginBottom: '0.5rem', lineHeight: '1' }}>{value}</div>
+      <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'var(--color-accent-primary)', marginBottom: '0.5rem', lineHeight: '1' }}>{value}</div>
       <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.3', maxWidth: '100%' }}>{label}</div>
     </div>
   );
@@ -437,7 +437,7 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
             visible: { transition: { staggerChildren: 0.15 } }
           }}
         >
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ color: 'var(--color-accent-blue)', fontWeight: '700', letterSpacing: '0.1em', marginBottom: '1rem', fontSize: '0.9rem' }}>
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ color: 'var(--color-accent-primary)', fontWeight: '700', letterSpacing: '0.1em', marginBottom: '1rem', fontSize: '0.9rem' }}>
             {industry}
           </motion.div>
           <motion.h3 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '1.5rem', letterSpacing: '-0.02em', lineHeight: '1.1' }}>
@@ -453,10 +453,10 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
           </motion.div>
 
           <motion.a 
-            whileHover={{ x: 5, color: 'var(--color-accent-blue)' }} 
+            whileHover={{ x: 5, color: 'var(--color-accent-primary)' }} 
             transition={{ type: "spring", stiffness: 200, damping: 25 }}
             href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" 
-            style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid var(--color-accent-blue)', paddingBottom: '4px' }}
+            style={{ color: 'var(--color-text-primary)', textDecoration: 'none', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid var(--color-accent-primary)', paddingBottom: '4px' }}
           >
             Book a demo <ArrowRight size={18} />
           </motion.a>
@@ -480,7 +480,7 @@ function StepCard({ number, title, description, subtitle }) {
       <div style={{ fontSize: '4rem', fontWeight: '800', color: 'rgba(255,255,255,0.1)', lineHeight: '1', marginBottom: '1.5rem' }}>{number}</div>
       <h4 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1rem' }}>{title}</h4>
       <p style={{ color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '2rem', flex: 1 }}>{description}</p>
-      <div style={{ color: 'var(--color-accent-blue)', fontWeight: '600', fontSize: '0.9rem' }}>{subtitle}</div>
+      <div style={{ color: 'var(--color-accent-primary)', fontWeight: '600', fontSize: '0.9rem' }}>{subtitle}</div>
     </motion.div>
   );
 }
@@ -493,7 +493,7 @@ function FeatureCard({ icon: Icon, title, description }) {
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
       style={{ padding: '2rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start', cursor: 'default' }}
     >
-      <div style={{ background: 'var(--color-accent-glow)', padding: '1rem', borderRadius: '12px', color: 'var(--color-accent-blue)' }}>
+      <div style={{ background: 'var(--color-accent-glow)', padding: '1rem', borderRadius: '12px', color: 'var(--color-accent-primary)' }}>
         <Icon size={24} />
       </div>
       <div>
@@ -794,7 +794,7 @@ function App() {
         </section>
 
         {/* CTA Section */}
-        <section style={{ padding: '10rem 0', background: 'radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.05) 0%, transparent 60%)' }}>
+        <section style={{ padding: '10rem 0', background: 'radial-gradient(circle at 50% 0%, rgba(123, 162, 144, 0.05) 0%, transparent 60%)' }}>
           <div className="container" style={{ textAlign: 'center' }}>
             <h2 style={{ fontSize: '4rem', fontWeight: '800', textTransform: 'uppercase', marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
               Your floor. Transformed. <br /><span style={{ color: 'var(--color-text-secondary)' }}>In one day.</span>
@@ -810,7 +810,7 @@ function App() {
                 href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" className="glass-panel" 
                 style={{ padding: '2rem 3rem', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', minWidth: '260px', textAlign: 'center' }}
               >
-                <CalendarIcon size={32} color="var(--color-accent-blue)" />
+                <CalendarIcon size={32} color="var(--color-accent-primary)" />
                 <div style={{ color: '#fff', fontSize: '1.5rem', fontWeight: '700', wordWrap: 'break-word', whiteSpace: 'normal' }}>Book a demo</div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.3' }}>On-site demo available</div>
               </motion.a>
@@ -821,7 +821,7 @@ function App() {
                 href="https://wa.me/919344477512" target="_blank" rel="noreferrer" className="glass-panel" 
                 style={{ padding: '2rem 3rem', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', minWidth: '260px', textAlign: 'center' }}
               >
-                <Users size={32} color="var(--color-accent-blue)" />
+                <Users size={32} color="var(--color-accent-primary)" />
                 <div style={{ color: '#fff', fontSize: '1.5rem', fontWeight: '700', wordWrap: 'break-word', whiteSpace: 'normal' }}>Talk to sales</div>
                 <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.3' }}>Response within 24 hours</div>
               </motion.a>
@@ -863,7 +863,7 @@ function CalendarIcon({ size, color }) {
 function TimelineItem({ time, title, description, icon }) {
   return (
     <div className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
-      <div style={{ width: '120px', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-accent-blue)', flexShrink: 0 }}>
+      <div style={{ width: '120px', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-accent-primary)', flexShrink: 0 }}>
         {time}
       </div>
       <div style={{ fontSize: '2.5rem', flexShrink: 0, opacity: 0.8 }}>

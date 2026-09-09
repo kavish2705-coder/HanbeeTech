@@ -16,8 +16,8 @@
   --color-text-secondary: #8b9bb4;
   
   /* Brand Accents - Restrained Cyan */
-  --color-accent-blue: #00d2ff;
-  --color-accent-glow: rgba(0, 210, 255, 0.1);
+  --color-accent-primary: #7ba290;
+  --color-accent-glow: rgba(123, 162, 144, 0.2);
   
   /* Extreme Crystal Glassmorphism */
   --glass-bg: rgba(10, 15, 25, 0.15);
@@ -48,7 +48,7 @@ body {
   /* Deep Navy Atmospheric Gradients */
   background-image: 
     radial-gradient(circle at 50% -20%, rgba(0, 40, 80, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 100% 50%, rgba(0, 210, 255, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 100% 50%, rgba(103, 139, 125, 0.03) 0%, transparent 40%),
     radial-gradient(circle at 0% 100%, rgba(4, 13, 26, 0.8) 0%, transparent 60%);
   background-attachment: fixed;
   color: var(--color-text-primary);
@@ -94,7 +94,7 @@ button {
   top: 0; left: 0; right: 0; bottom: 0;
   border-radius: 16px;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(0,210,255,0.2));
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(123, 162, 144, 0.3));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

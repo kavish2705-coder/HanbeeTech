@@ -515,30 +515,45 @@ const MODEL_PATHS = [
   '/models/FINAL_TOKENFLOW_MODEL-v1.glb'
 ];
 
+// Preload models so they begin downloading immediately 
+MODEL_PATHS.forEach(path => useGLTF.preload(path));
+
 function LoadingScreen({ onFinished }) {
   const [fadeOut, setFadeOut] = useState(false);
   const { progress, active, loaded, total } = useProgress();
 
+  // Prevent scrolling while loading
   useEffect(() => {
-    // When 3D assets finish loading, or if already cached
-    const isDone = (progress === 100 && !active) || (total > 0 && loaded >= total);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  useEffect(() => {
+    // When 3D assets finish loading
+    const isDone = (progress === 100 && !active) || (total > 0 && loaded >= total && !active);
+    
     if (isDone) {
       const minDelay = setTimeout(() => {
         setFadeOut(true);
         setTimeout(onFinished, 700);
-      }, 350);
+      }, 500);
       return () => clearTimeout(minDelay);
     }
   }, [progress, active, loaded, total, onFinished]);
 
-  // Safety fallback: Never keep the user waiting more than 3.5s
+  // Fallback ONLY for the fully-cached case where useProgress never registers any active loading
+  // because the preload finished instantly from the browser cache before this component mounted.
   useEffect(() => {
-    const safety = setTimeout(() => {
-      setFadeOut(true);
-      setTimeout(onFinished, 700);
-    }, 3500);
-    return () => clearTimeout(safety);
-  }, [onFinished]);
+    const cacheFallback = setTimeout(() => {
+      if (total === 0 && !active) {
+        setFadeOut(true);
+        setTimeout(onFinished, 700);
+      }
+    }, 1500);
+    return () => clearTimeout(cacheFallback);
+  }, [total, active, onFinished]);
 
   return (
     <motion.div

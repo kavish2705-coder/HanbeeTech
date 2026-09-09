@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows } from '@react-three/drei';
+import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows, useProgress } from '@react-three/drei';
 import { Battery, WifiOff, Clock, Map, Navigation, Users, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
 
 // ═══════════════════════════════════════════════════════════
@@ -515,20 +515,34 @@ const MODEL_PATHS = [
 
 function LoadingScreen({ onFinished }) {
   const [fadeOut, setFadeOut] = useState(false);
+  const { progress, active, loaded, total } = useProgress();
+  const [hasStartedLoading, setHasStartedLoading] = useState(false);
 
   useEffect(() => {
-    const preloadPromises = MODEL_PATHS.map(url =>
-      fetch(url).then(r => {
-        if (!r.ok) throw new Error(`Failed to load ${url}`);
-        return r.arrayBuffer();
-      })
-    );
-    const minDelay = new Promise(resolve => setTimeout(resolve, 2000));
+    // Detect when loading actually begins
+    if (active || total > 0) {
+      setHasStartedLoading(true);
+    }
+  }, [active, total]);
 
-    Promise.all([...preloadPromises, minDelay])
-      .then(() => { setFadeOut(true); setTimeout(onFinished, 800); })
-      .catch(() => { setFadeOut(true); setTimeout(onFinished, 800); });
-  }, [onFinished]);
+  useEffect(() => {
+    // Only dismiss after loading has started, finished, and progress is 100
+    if (hasStartedLoading && progress === 100 && !active) {
+      const minDelay = setTimeout(() => {
+        setFadeOut(true);
+        setTimeout(onFinished, 800);
+      }, 500); // add a tiny buffer
+      return () => clearTimeout(minDelay);
+    }
+    // Safety fallback in case useProgress doesn't trigger properly
+    const safety = setTimeout(() => {
+      if (!fadeOut) {
+        setFadeOut(true);
+        setTimeout(onFinished, 800);
+      }
+    }, 15000);
+    return () => clearTimeout(safety);
+  }, [progress, active, hasStartedLoading, onFinished, fadeOut]);
 
   return (
     <motion.div
@@ -878,3 +892,7 @@ function TimelineItem({ time, title, description, icon }) {
 }
 
 export default App;
+
+useGLTF.preload('/models/FINAL_HOSPITAL-v1.glb');
+useGLTF.preload('/models/FINAL_RESTAURANT-v1.glb');
+useGLTF.preload('/models/FINAL_TOKENFLOW_MODEL-v1.glb');

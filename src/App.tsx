@@ -1,21 +1,31 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState, Suspense, useEffect, useCallback } from 'react';
+import React, { useRef, useState, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows, useProgress } from '@react-three/drei';
 import { Battery, WifiOff, Clock, Map, Navigation, Users, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import * as THREE from 'three';
 
+interface NeuralConstellationParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  pulse: number;
+  speed: number;
+}
 // ═══════════════════════════════════════════════════════════
 // NEURAL CONSTELLATION — The Living Hero Background
 // ═══════════════════════════════════════════════════════════
 function NeuralConstellation() {
-  const canvasRef = useRef(null);
-  const animRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
 
   const draw = useCallback(() => {
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current as (HTMLCanvasElement & { _particles?: NeuralConstellationParticle[] }) | null;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const W = canvas.width;
     const H = canvas.height;
     const t = performance.now() * 0.001;
@@ -158,10 +168,10 @@ function NeuralConstellation() {
     const resize = () => {
       canvas.width = window.innerWidth * window.devicePixelRatio;
       canvas.height = window.innerHeight * window.devicePixelRatio;
-      canvas._particles = null;
+      (canvas as any)._particles = undefined;
     };
 
-    const handleMouse = (e) => {
+    const handleMouse = (e: MouseEvent) => {
       mouseRef.current = {
         x: e.clientX / window.innerWidth,
         y: e.clientY / window.innerHeight,
@@ -195,10 +205,10 @@ function NeuralConstellation() {
 }
 
 // Smooth easing functions
-const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
-const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-const clamp01 = (t) => Math.max(0, Math.min(1, t));
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
 
 // Showroom Platform
 function ShowroomPlatform() {
@@ -238,17 +248,17 @@ function ShowroomPlatform() {
   );
 }
 
-function Hero3DScene({ isReady }) {
+function Hero3DScene({ isReady }: { isReady: boolean }) {
   const tokenflow = useGLTF('/models/FINAL_TOKENFLOW_MODEL-v1.glb');
   const hospital = useGLTF('/models/FINAL_HOSPITAL-v1.glb');
   const restaurant = useGLTF('/models/FINAL_RESTAURANT-v1.glb');
 
-  const tokenRef = useRef();
-  const hospitalRef = useRef();
-  const restaurantRef = useRef();
-  const sweepLightRef = useRef();
-  const rimLightRef = useRef();
-  const startTimeRef = useRef(null);
+  const tokenRef = useRef<THREE.Group>(null);
+  const hospitalRef = useRef<THREE.Group>(null);
+  const restaurantRef = useRef<THREE.Group>(null);
+  const sweepLightRef = useRef<THREE.SpotLight>(null);
+  const rimLightRef = useRef<THREE.SpotLight>(null);
+  const startTimeRef = useRef<number | null>(null);
 
   useFrame((state) => {
     if (!isReady) return; // Wait until loading screen is fully gone
@@ -260,7 +270,7 @@ function Hero3DScene({ isReady }) {
     const t = state.clock.getElapsedTime() - startTimeRef.current;
 
     // Quintic ease-out — ultra smooth, no abrupt deceleration
-    const ease5 = (x) => 1 - Math.pow(1 - x, 5);
+    const ease5 = (x: number) => 1 - Math.pow(1 - x, 5);
 
     // ═══ TokenFlow rises from below — continuous blend into idle ═══
     if (tokenRef.current) {
@@ -365,7 +375,7 @@ function Hero3DScene({ isReady }) {
   );
 }
 
-function SectionHeading({ title, subtitle }) {
+function SectionHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
       <motion.h2
@@ -390,7 +400,7 @@ function SectionHeading({ title, subtitle }) {
   );
 }
 
-function MetricCard({ value, label }) {
+function MetricCard({ value, label }: { value: string; label: string }) {
   return (
     <div className="glass-panel" style={{ padding: '1.5rem 1rem', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'var(--color-accent-primary)', marginBottom: '0.5rem', lineHeight: '1' }}>{value}</div>
@@ -399,12 +409,23 @@ function MetricCard({ value, label }) {
   );
 }
 
-function ShowcaseModel({ path, scale, position }) {
+function ShowcaseModel({ path, scale, position }: { path: string; scale: number; position: [number, number, number] }) {
   const gltf = useGLTF(path);
   return <primitive object={gltf.scene.clone()} scale={scale} position={position} />;
 }
 
-function ProductShowcase({ industry, title, description, metrics, reverse, image, model, modelPosition }) {
+interface ProductShowcaseProps {
+  industry: string;
+  title: string;
+  description: string;
+  metrics: Array<{ value: string; label: string }>;
+  reverse: boolean;
+  image?: string;
+  model?: string;
+  modelPosition?: [number, number, number];
+}
+
+function ProductShowcase({ industry, title, description, metrics, reverse, image, model, modelPosition }: ProductShowcaseProps) {
   const textAlignment = reverse ? 'flex-start' : 'flex-end';
   const canvasPosition = reverse 
     ? { right: '-50%', width: '150%' } 
@@ -475,7 +496,7 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
   );
 }
 
-function StepCard({ number, title, description, subtitle }) {
+function StepCard({ number, title, description, subtitle }: { number: string; title: string; description: string; subtitle: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -494,7 +515,7 @@ function StepCard({ number, title, description, subtitle }) {
   );
 }
 
-function FeatureCard({ icon: Icon, title, description }) {
+function FeatureCard({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
   return (
     <motion.div 
       className="glass-panel" 
@@ -525,7 +546,7 @@ const MODEL_PATHS = [
 // Preload models so they begin downloading immediately 
 MODEL_PATHS.forEach(path => useGLTF.preload(path));
 
-function LoadingScreen({ onFinished }) {
+function LoadingScreen({ onFinished }: { onFinished: () => void }) {
   const [fadeOut, setFadeOut] = useState(false);
   const { progress, active, loaded, total } = useProgress();
 
@@ -895,7 +916,7 @@ function App() {
 }
 
 // Helper icons
-function CalendarIcon({ size, color }) {
+function CalendarIcon({ size, color }: { size: number; color: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -906,7 +927,7 @@ function CalendarIcon({ size, color }) {
   );
 }
 
-function TimelineItem({ time, title, description, icon }) {
+function TimelineItem({ time, title, description, icon }: { time: string; title: string; description: string; icon: string | React.ReactNode }) {
   return (
     <div className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
       <div style={{ width: '120px', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-accent-primary)', flexShrink: 0 }}>

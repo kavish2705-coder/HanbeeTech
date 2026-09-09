@@ -286,23 +286,23 @@ function Hero3DScene() {
 
     // ═══ LIGHTS — smooth continuous fade ═══
     if (rimLightRef.current) {
-      rimLightRef.current.intensity = ease5(clamp01(t / 3)) * 8;
+      rimLightRef.current.intensity = ease5(clamp01(t / 3)) * 10;
     }
 
     if (sweepLightRef.current) {
       const sweepP = clamp01(t / 7);
       const easedSweep = sweepP < 0.5 ? 2 * sweepP * sweepP : 1 - Math.pow(-2 * sweepP + 2, 2) / 2;
       sweepLightRef.current.position.x = -12 + easedSweep * 24 + (sweepP >= 1 ? Math.sin(t * 0.3) * 3 : 0);
-      sweepLightRef.current.intensity = ease5(clamp01(t / 1.5)) * 1.8 + (sweepP >= 1 ? Math.sin(t * 0.4) * 0.3 : 0);
+      sweepLightRef.current.intensity = ease5(clamp01(t / 1.5)) * 2.2 + (sweepP >= 1 ? Math.sin(t * 0.4) * 0.3 : 0);
     }
   });
 
   return (
     <>
-      <Environment preset="night" environmentIntensity={0.3} />
+      <Environment preset="city" environmentIntensity={0.6} />
 
-      {/* Ambient — enough to see the models */}
-      <ambientLight intensity={0.1} color="#ffffff" />
+      {/* Ambient — crisp base illumination so dark models never disappear */}
+      <ambientLight intensity={0.4} color="#ffffff" />
 
       {/* Dramatic backlight rim (the signature car-ad look) */}
       <spotLight
@@ -326,11 +326,12 @@ function Hero3DScene() {
         castShadow
       />
 
-      {/* Key light — centered so it doesn't specifically target the left hospital screen */}
-      <directionalLight position={[0, 12, 5]} intensity={0.9} color="#ffffff" />
-      {/* Soft fill lights from both sides for balance */}
-      <directionalLight position={[-8, 8, 2]} intensity={0.2} color="#e0f0ff" />
-      <directionalLight position={[8, 8, 2]} intensity={0.2} color="#e0f0ff" />
+      {/* Key light — centered overhead */}
+      <directionalLight position={[0, 11, 6]} intensity={1.3} color="#ffffff" />
+      {/* Soft left fill light */}
+      <directionalLight position={[-8, 7, 3]} intensity={0.5} color="#dce8f8" />
+      {/* Right light — slightly dimmed as requested */}
+      <directionalLight position={[8, 7, 3]} intensity={0.35} color="#c8dcf0" />
 
 
       {/* ── TokenFlow (Center, slightly back) ── */}
@@ -414,10 +415,11 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
             dpr={[1, 1.5]}
             gl={{ antialias: true, alpha: true }}
           >
-            <Environment preset="studio" environmentIntensity={0.5} />
-            <ambientLight intensity={0.1} color="#ffffff" />
-            <directionalLight position={[5, 10, 5]} intensity={0.9} color="#ffffff" />
-            <directionalLight position={[-5, 5, 5]} intensity={0.25} color="#e0f0ff" />
+            <Environment preset="studio" environmentIntensity={0.65} />
+            <ambientLight intensity={0.35} color="#ffffff" />
+            <directionalLight position={[-5, 7, 5]} intensity={0.8} color="#e6f0ff" />
+            {/* Right side light — slightly dimmed as requested */}
+            <directionalLight position={[5, 8, 5]} intensity={0.95} color="#ffffff" />
             <Suspense fallback={null}>
               <ShowcaseModel path={model} scale={10} position={mPos} />
             </Suspense>
@@ -516,44 +518,39 @@ const MODEL_PATHS = [
 function LoadingScreen({ onFinished }) {
   const [fadeOut, setFadeOut] = useState(false);
   const { progress, active, loaded, total } = useProgress();
-  const [hasStartedLoading, setHasStartedLoading] = useState(false);
 
   useEffect(() => {
-    // Detect when loading actually begins
-    if (active || total > 0) {
-      setHasStartedLoading(true);
-    }
-  }, [active, total]);
-
-  useEffect(() => {
-    // Only dismiss after loading has started, finished, and progress is 100
-    if (hasStartedLoading && progress === 100 && !active) {
+    // When 3D assets finish loading, or if already cached
+    const isDone = (progress === 100 && !active) || (total > 0 && loaded >= total);
+    if (isDone) {
       const minDelay = setTimeout(() => {
         setFadeOut(true);
-        setTimeout(onFinished, 800);
-      }, 500); // add a tiny buffer
+        setTimeout(onFinished, 700);
+      }, 350);
       return () => clearTimeout(minDelay);
     }
-    // Safety fallback in case useProgress doesn't trigger properly
+  }, [progress, active, loaded, total, onFinished]);
+
+  // Safety fallback: Never keep the user waiting more than 3.5s
+  useEffect(() => {
     const safety = setTimeout(() => {
-      if (!fadeOut) {
-        setFadeOut(true);
-        setTimeout(onFinished, 800);
-      }
-    }, 15000);
+      setFadeOut(true);
+      setTimeout(onFinished, 700);
+    }, 3500);
     return () => clearTimeout(safety);
-  }, [progress, active, hasStartedLoading, onFinished, fadeOut]);
+  }, [onFinished]);
 
   return (
     <motion.div
       animate={{ opacity: fadeOut ? 0 : 1 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        background: '#000000',
+        background: '#010409',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        gap: '3rem',
+        gap: '2.5rem',
+        pointerEvents: fadeOut ? 'none' : 'auto',
       }}
     >
       {/* HANBEE text */}
@@ -565,25 +562,38 @@ function LoadingScreen({ onFinished }) {
         HANBEE
       </div>
 
-      {/* Three bouncing dots */}
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        {[0, 1, 2].map(i => (
-          <motion.div
-            key={i}
-            animate={{ y: [0, -12, 0] }}
-            transition={{
-              duration: 0.6,
-              repeat: Infinity,
-              delay: i * 0.15,
-              ease: 'easeInOut',
-            }}
-            style={{
-              width: '8px', height: '8px',
-              borderRadius: '50%',
-              background: '#ffffff',
-            }}
-          />
-        ))}
+      {/* Three bouncing dots with subtle olive glow */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {[0, 1, 2].map(i => (
+            <motion.div
+              key={i}
+              animate={{ y: [0, -10, 0] }}
+              transition={{
+                duration: 0.6,
+                repeat: Infinity,
+                delay: i * 0.15,
+                ease: 'easeInOut',
+              }}
+              style={{
+                width: '8px', height: '8px',
+                borderRadius: '50%',
+                background: '#7ba290',
+                boxShadow: '0 0 10px rgba(123, 162, 144, 0.5)',
+              }}
+            />
+          ))}
+        </div>
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: '0.75rem',
+          letterSpacing: '0.15em',
+          color: 'var(--color-text-secondary, #8b949e)',
+          textTransform: 'uppercase',
+          fontWeight: 600,
+        }}>
+          {progress > 0 ? `Loading 3D Models • ${Math.round(progress)}%` : 'Loading 3D Experience'}
+        </div>
       </div>
     </motion.div>
   );
@@ -668,7 +678,7 @@ function App() {
           </div>
 
           {/* Bottom gradient fade */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '30%', zIndex: 2, pointerEvents: 'none', background: 'linear-gradient(to top, #010409 0%, transparent 100%)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '15%', zIndex: 2, pointerEvents: 'none', background: 'linear-gradient(to top, #010409 0%, transparent 100%)' }} />
         </section>
 
         {/* Where HANBEE Works */}

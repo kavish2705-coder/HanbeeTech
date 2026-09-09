@@ -238,7 +238,7 @@ function ShowroomPlatform() {
   );
 }
 
-function Hero3DScene() {
+function Hero3DScene({ isReady }) {
   const tokenflow = useGLTF('/models/FINAL_TOKENFLOW_MODEL-v1.glb');
   const hospital = useGLTF('/models/FINAL_HOSPITAL-v1.glb');
   const restaurant = useGLTF('/models/FINAL_RESTAURANT-v1.glb');
@@ -248,9 +248,16 @@ function Hero3DScene() {
   const restaurantRef = useRef();
   const sweepLightRef = useRef();
   const rimLightRef = useRef();
+  const startTimeRef = useRef(null);
 
   useFrame((state) => {
-    const t = state.clock.getElapsedTime();
+    if (!isReady) return; // Wait until loading screen is fully gone
+    
+    if (startTimeRef.current === null) {
+      startTimeRef.current = state.clock.getElapsedTime();
+    }
+    
+    const t = state.clock.getElapsedTime() - startTimeRef.current;
 
     // Quintic ease-out — ultra smooth, no abrupt deceleration
     const ease5 = (x) => 1 - Math.pow(1 - x, 5);
@@ -687,7 +694,7 @@ function App() {
               frameloop="always"
             >
               <Suspense fallback={null}>
-                <Hero3DScene />
+                <Hero3DScene isReady={!isLoading} />
               </Suspense>
             </Canvas>
           </div>

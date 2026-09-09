@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import React, { useRef, useState, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows, useProgress } from '@react-three/drei';
@@ -28,6 +28,13 @@ function NeuralConstellation() {
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     const W = canvas.width;
     const H = canvas.height;
+    
+    // Performance optimization: skip heavy O(N^2) calculations if scrolled out of view
+    if (window.scrollY > window.innerHeight * 1.5) {
+      animRef.current = requestAnimationFrame(draw);
+      return;
+    }
+
     const t = performance.now() * 0.001;
 
     // Clear with deep void
@@ -367,7 +374,7 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
         scale={25}
         blur={2.5}
         far={5}
-        resolution={1024}
+        resolution={512}
         color="#000000"
       />
 
@@ -431,14 +438,17 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
     ? { right: '-50%', width: '150%' } 
     : { left: '-50%', width: '150%' };
   const mPos = modelPosition || [0, -6.5, 0];
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { margin: "200px" });
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', width: '100%', display: 'flex', alignItems: 'center' }}>
+    <div ref={sectionRef} style={{ position: 'relative', minHeight: '100vh', width: '100%', display: 'flex', alignItems: 'center' }}>
 
       {/* Immersive 3D Background - Offset to place model on left/right seamlessly */}
       {model && (
         <div style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
           <Canvas
+            frameloop={inView ? 'always' : 'demand'}
             camera={{ position: [0, 0, 18], fov: 45 }}
             dpr={[1, 1.5]}
             gl={{ antialias: true, alpha: true }}
@@ -645,6 +655,8 @@ function LoadingScreen({ onFinished }: { onFinished: () => void }) {
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const handleLoadingFinished = useCallback(() => setIsLoading(false), []);
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { margin: "200px" });
 
   return (
     <div className="app-container" style={{ overflowX: 'hidden' }}>
@@ -673,7 +685,7 @@ function App() {
 
       <main>
         {/* Cinematic Hero Section */}
-        <section style={{ height: '100vh', width: '100vw', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: '#010409' }}>
+        <section ref={heroRef} style={{ height: '100vh', width: '100vw', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: '#010409' }}>
           
           {/* Giant HANBEE Background Text */}
           <div style={{
@@ -709,10 +721,10 @@ function App() {
           {/* 3D Showroom Canvas */}
           <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
             <Canvas
+              frameloop={heroInView ? 'always' : 'demand'}
               camera={{ position: [0, 1, 6], fov: 55 }}
               dpr={[1, 1.5]}
               gl={{ antialias: true, powerPreference: 'high-performance' }}
-              frameloop="always"
             >
               <Suspense fallback={null}>
                 <Hero3DScene isReady={!isLoading} />

@@ -1,0 +1,109 @@
+@font-face {
+  font-family: 'Deltha';
+  src: url('/fonts/Deltha.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+:root {
+  /* Colors - Deep Navy / Automotive Cinematic */
+  --color-bg-primary: #010409;
+  --color-bg-secondary: #040d1a;
+  --color-bg-elevated: rgba(4, 13, 26, 0.4);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8b9bb4;
+  
+  /* Brand Accents - Restrained Cyan */
+  --color-accent-blue: #00d2ff;
+  --color-accent-glow: rgba(0, 210, 255, 0.1);
+  
+  /* Extreme Crystal Glassmorphism */
+  --glass-bg: rgba(10, 15, 25, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-highlight: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+  --glass-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+
+  /* Typography */
+  --font-primary: 'Inter', sans-serif;
+  
+  /* Spacing & Layout */
+  --max-width: 1280px;
+  --section-padding: 6rem 2rem;
+  
+  /* Transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg-primary);
+  /* Deep Navy Atmospheric Gradients */
+  background-image: 
+    radial-gradient(circle at 50% -20%, rgba(0, 40, 80, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 100% 50%, rgba(0, 210, 255, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(4, 13, 26, 0.8) 0%, transparent 60%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+/* Utilities */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  background-image: var(--glass-highlight);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(0,210,255,0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

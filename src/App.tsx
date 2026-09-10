@@ -324,7 +324,7 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
 
   return (
     <>
-      <Environment preset="city" environmentIntensity={0.6} />
+      <Environment preset="city" environmentIntensity={0.6} environmentRotation={[0, Math.PI / 2, 0]} />
 
       {/* Ambient — crisp base illumination so dark models never disappear */}
       <ambientLight intensity={0.4} color="#ffffff" />
@@ -340,23 +340,13 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
         castShadow
       />
 
-      {/* Moving sweep light */}
-      <spotLight
-        ref={sweepLightRef}
-        position={[-12, 8, 10]}
-        angle={0.4}
-        penumbra={0.9}
-        intensity={0}
-        color="#ffffff"
-        castShadow
-      />
+
 
       {/* Key light — centered overhead */}
       <directionalLight position={[0, 11, 6]} intensity={1.3} color="#ffffff" />
       {/* Soft left fill light */}
       <directionalLight position={[-8, 7, 3]} intensity={0.5} color="#dce8f8" />
-      {/* Right light — slightly dimmed as requested */}
-      <directionalLight position={[8, 7, 3]} intensity={0.35} color="#c8dcf0" />
+      {/* Right light — removed as requested */}
 
 
       {/* ── TokenFlow (Center, slightly back) ── */}
@@ -459,11 +449,10 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
             dpr={[1, 1.5]}
             gl={{ antialias: true, alpha: true }}
           >
-            <Environment preset="studio" environmentIntensity={0.65} />
+            <Environment preset="studio" environmentIntensity={0.4} environmentRotation={[0, Math.PI / 2, 0]} />
             <ambientLight intensity={0.35} color="#ffffff" />
             <directionalLight position={[-5, 7, 5]} intensity={0.8} color="#e6f0ff" />
-            {/* Right side light — slightly dimmed as requested */}
-            <directionalLight position={[5, 8, 5]} intensity={0.95} color="#ffffff" />
+            {/* Right side light — removed as requested */}
             <Suspense fallback={null}>
               <ShowcaseModel path={model} scale={10} position={mPos} />
             </Suspense>

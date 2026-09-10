@@ -908,16 +908,56 @@ function App() {
 
       </main>
 
-      <footer style={{ borderTop: '1px solid var(--glass-border)', padding: '4rem 0', background: 'var(--color-bg-secondary)' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--color-text-secondary)' }}>
-          <div style={{ fontFamily: "'Deltha', sans-serif", fontSize: '1.5rem', letterSpacing: '0.15em', color: 'var(--color-text-primary)' }}>
-            HANBEE
+      <footer style={{ borderTop: '1px solid var(--glass-border)', padding: '6rem 0', background: 'var(--color-bg-primary)' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: '2rem', color: 'var(--color-text-primary)' }}>
+          {/* Logo Column */}
+          <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <div style={{ fontFamily: "'Deltha', sans-serif", fontSize: '2.5rem', letterSpacing: '0.2em', color: 'var(--color-text-primary)', marginTop: '-0.5rem' }}>
+              HANBEE
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '2rem', fontSize: '0.9rem' }}>
-            <motion.a whileHover={{ color: '#ffffff' }} href="https://hanbee.in/ai-robotics-company-in-india#about" style={{ color: 'inherit', textDecoration: 'none' }}>About</motion.a>
-            <motion.a whileHover={{ color: '#ffffff' }} href="https://hanbee.in/hanbee-technologies-support#contact-us" style={{ color: 'inherit', textDecoration: 'none' }}>Support</motion.a>
-            <motion.a whileHover={{ color: '#ffffff' }} href="https://hanbee.in/hanbee-technologies-support#policy" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy Policy</motion.a>
-            <motion.a whileHover={{ color: '#ffffff' }} href="https://hanbee.in/hanbee-technologies-support#policy" style={{ color: 'inherit', textDecoration: 'none' }}>Terms of Service</motion.a>
+
+          {/* Contact Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', fontSize: '0.85rem' }}>
+            <h4 style={{ color: 'var(--color-accent-primary)', fontWeight: '500', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Contact</h4>
+            <a href="mailto:info@hanbee.in" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>info@hanbee.in</a>
+            <a href="tel:+919344477512" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>+91 9344477512</a>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+              <a href="#" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              </a>
+              <a href="#" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Product Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', fontSize: '0.85rem' }}>
+            <h4 style={{ color: 'var(--color-accent-primary)', fontWeight: '500', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Product</h4>
+            <span style={{ color: 'var(--color-text-secondary)' }}>HANBEE LS1</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>AROGYA H1</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>TOKENFLOW LITE</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>HANBEE S1</span>
+          </div>
+
+          {/* Use Cases Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', fontSize: '0.85rem' }}>
+            <h4 style={{ color: 'var(--color-accent-primary)', fontWeight: '500', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Use Cases</h4>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Retail</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Restaurants</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Hospitals</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Offices</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Airports</span>
+          </div>
+
+          {/* Company Column */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', fontSize: '0.85rem' }}>
+            <h4 style={{ color: 'var(--color-accent-primary)', fontWeight: '500', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Company</h4>
+            <a href="https://hanbee.in/ai-robotics-company-in-india#about" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>About</a>
+            <a href="https://hanbee.in/hanbee-technologies-support#contact-us" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>Support</a>
+            <a href="https://hanbee.in/hanbee-technologies-support#policy" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>Privacy Policy</a>
+            <a href="https://hanbee.in/hanbee-technologies-support#policy" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>Terms of service</a>
           </div>
         </div>
       </footer>

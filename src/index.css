@@ -8,22 +8,22 @@
 
 
 :root {
-  /* Colors - Deep Navy / Automotive Cinematic */
-  --color-bg-primary: #010409;
-  --color-bg-secondary: #040d1a;
-  --color-bg-elevated: rgba(4, 13, 26, 0.4);
-  --color-text-primary: #ffffff;
+  /* Colors - Charcoal Blue / Premium Dark */
+  --color-bg-primary: #080c14;
+  --color-bg-secondary: #0c1220;
+  --color-bg-elevated: rgba(12, 18, 32, 0.5);
+  --color-text-primary: #f0f2f5;
   --color-text-secondary: #8b9bb4;
   
   /* Brand Accents - Restrained Cyan */
   --color-accent-primary: #7ba290;
   --color-accent-glow: rgba(123, 162, 144, 0.2);
   
-  /* Liquid Glass Morphism */
+  /* Realistic Liquid Glass Morphism (Mild for Performance) */
   --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --glass-highlight: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0) 100%);
-  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 8px rgba(0,0,0,0.5);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: linear-gradient(120deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 30%, rgba(255,255,255,0) 100%);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 0 8px rgba(255, 255, 255, 0.03), inset 0 1px 2px rgba(255,255,255,0.06);
 
   /* Typography */
   --font-primary: 'Inter', sans-serif;
@@ -42,14 +42,20 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Offset for fixed navbar */
+}
+
 body {
   font-family: var(--font-primary);
   background-color: var(--color-bg-primary);
-  /* Deep Navy Atmospheric Gradients */
+  /* Charcoal Blue Atmospheric Gradients — smooth, no harsh edges */
   background-image: 
-    radial-gradient(circle at 50% -20%, rgba(0, 40, 80, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 100% 50%, rgba(103, 139, 125, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 0% 100%, rgba(4, 13, 26, 0.8) 0%, transparent 60%);
+    radial-gradient(ellipse 120% 80% at 50% -10%, rgba(15, 30, 55, 0.6) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 60% at 100% 40%, rgba(20, 35, 60, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 0% 90%, rgba(10, 18, 32, 0.4) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(103, 139, 125, 0.02) 0%, transparent 70%);
   background-attachment: fixed;
   color: var(--color-text-primary);
   line-height: 1.6;
@@ -79,27 +85,29 @@ button {
 .glass-panel {
   background: var(--glass-bg);
   background-image: var(--glass-highlight);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
   border: 1px solid var(--glass-border);
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow: var(--glass-shadow);
   position: relative;
   overflow: hidden;
   transition: var(--transition-smooth);
 }
 
+/* Simulate the thick glass edge catching light */
 .glass-panel::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.15));
+  background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.15) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+  opacity: 0.6;
 }
 
 .text-gradient {

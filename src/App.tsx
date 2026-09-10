@@ -1,8 +1,8 @@
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import React, { useRef, useState, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows, useProgress } from '@react-three/drei';
-import { Battery, WifiOff, Clock, Map, Navigation, Users, ShieldCheck, Zap, ArrowRight, Package, User, MousePointer2 } from 'lucide-react';
+import { OrbitControls, useGLTF, Environment, ContactShadows, useProgress } from '@react-three/drei';
+import { Battery, WifiOff, Map, Navigation, Users, Zap, ArrowRight, Package, User, MousePointer2 } from 'lucide-react';
 import * as THREE from 'three';
 
 interface NeuralConstellationParticle {
@@ -13,6 +13,32 @@ interface NeuralConstellationParticle {
   size: number;
   pulse: number;
   speed: number;
+}
+
+class CanvasErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.warn("3D Canvas crashed, caught by boundary:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', textAlign: 'center', color: 'var(--color-text-secondary)', zIndex: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ color: 'var(--color-text-secondary)', opacity: 0.5 }}>Hardware acceleration limited</div>
+            <div style={{ fontSize: '0.9rem' }}>The 3D interactive model couldn't be loaded on this device's current graphics context.</div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 // ═══════════════════════════════════════════════════════════
 // NEURAL CONSTELLATION — The Living Hero Background
@@ -38,7 +64,7 @@ function NeuralConstellation() {
     const t = performance.now() * 0.001;
 
     // Clear with deep void
-    ctx.fillStyle = '#010409';
+    ctx.fillStyle = '#080c14';
     ctx.fillRect(0, 0, W, H);
 
     // ── Aurora Blobs (morphing gradient orbs) ──
@@ -59,7 +85,7 @@ function NeuralConstellation() {
     // ── Particle System ──
     if (!canvas._particles) {
       canvas._particles = [];
-      const count = Math.min(180, Math.floor(W * H / 8000));
+      const count = Math.min(80, Math.floor(W * H / 18000));
       for (let i = 0; i < count; i++) {
         canvas._particles.push({
           x: Math.random() * W,
@@ -212,9 +238,9 @@ function NeuralConstellation() {
 }
 
 // Smooth easing functions
-const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
-const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const _easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const _easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+const _easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
 
 // Showroom Platform
@@ -255,8 +281,6 @@ function ShowroomPlatform() {
   );
 }
 
-let globalHeroStartTime: number | null = null;
-
 function Hero3DScene({ isReady }: { isReady: boolean }) {
   const tokenflow = useGLTF('/models/FINAL_TOKENFLOW_MODEL-v1.glb');
   const hospital = useGLTF('/models/FINAL_HOSPITAL-v1.glb');
@@ -267,15 +291,19 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
   const restaurantRef = useRef<THREE.Group>(null);
   const sweepLightRef = useRef<THREE.SpotLight>(null);
   const rimLightRef = useRef<THREE.SpotLight>(null);
+  const startTimeRef = useRef<number | null>(null);
 
   useFrame((state) => {
-    if (!isReady) return; // Wait until loading screen is fully gone
-    
-    if (globalHeroStartTime === null) {
-      globalHeroStartTime = performance.now() / 1000;
+    if (!isReady) {
+      startTimeRef.current = null;
+      return;
     }
     
-    const t = (performance.now() / 1000) - globalHeroStartTime;
+    if (startTimeRef.current === null) {
+      startTimeRef.current = performance.now() / 1000;
+    }
+    
+    const t = (performance.now() / 1000) - startTimeRef.current;
 
     // Quintic ease-out — ultra smooth, no abrupt deceleration
     const ease5 = (x: number) => 1 - Math.pow(1 - x, 5);
@@ -409,7 +437,8 @@ function MetricCard({ value, label }: { value: string; label: string }) {
 
 function ShowcaseModel({ path, scale, position }: { path: string; scale: number; position: [number, number, number] }) {
   const gltf = useGLTF(path);
-  return <primitive object={gltf.scene.clone()} scale={scale} position={position} />;
+  const scene = React.useMemo(() => gltf.scene.clone(), [gltf]);
+  return <primitive object={scene} scale={scale} position={position} />;
 }
 
 interface ProductShowcaseProps {
@@ -443,21 +472,28 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
       {/* Immersive 3D Background - Offset to place model on left/right seamlessly */}
       {model && hasMounted && (
         <div style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
-          <Canvas
-            frameloop={inView ? 'always' : 'demand'}
-            camera={{ position: [0, 0, 18], fov: 45 }}
-            dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: true }}
-          >
-            <Environment preset="studio" environmentIntensity={0.4} environmentRotation={[0, Math.PI / 2, 0]} />
-            <ambientLight intensity={0.35} color="#ffffff" />
-            <directionalLight position={[-5, 7, 5]} intensity={0.8} color="#e6f0ff" />
-            {/* Right side light — removed as requested */}
-            <Suspense fallback={null}>
-              <ShowcaseModel path={model} scale={10} position={mPos} />
-            </Suspense>
-            <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} target={[0, 0, 0]} />
-          </Canvas>
+          <CanvasErrorBoundary>
+            <Canvas
+              frameloop={inView ? 'always' : 'demand'}
+              camera={{ position: [0, 0, 18], fov: 45 }}
+              dpr={[1, 1.5]}
+              gl={{ antialias: true, alpha: true }}
+              onCreated={({ gl }) => {
+                gl.domElement.addEventListener('webglcontextlost', (e) => {
+                  e.preventDefault();
+                  console.warn('WebGL context lost in showcase!');
+                }, false);
+              }}
+            >
+              <ambientLight intensity={0.35} color="#ffffff" />
+              <directionalLight position={[-5, 7, 5]} intensity={0.8} color="#e6f0ff" />
+              <Suspense fallback={null}>
+                <Environment preset="studio" environmentIntensity={0.4} environmentRotation={[0, Math.PI / 2, 0]} />
+                <ShowcaseModel path={model} scale={10} position={mPos} />
+              </Suspense>
+              <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1.5} target={[0, 0, 0]} />
+            </Canvas>
+          </CanvasErrorBoundary>
         </div>
       )}
 
@@ -597,7 +633,7 @@ function LoadingScreen({ onFinished }: { onFinished: () => void }) {
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        background: '#010409',
+        background: 'var(--color-bg-primary)',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         gap: '2.5rem',
@@ -660,7 +696,7 @@ function App() {
     <div className="app-container" style={{ overflowX: 'hidden' }}>
       {isLoading && <LoadingScreen onFinished={handleLoadingFinished} />}
       {/* Navigation */}
-      <nav style={{ padding: '1.5rem 2rem', position: 'fixed', width: '100%', top: 0, zIndex: 100, background: 'linear-gradient(to bottom, rgba(1,4,9,0.9), transparent)', backdropFilter: 'blur(8px)', maskImage: 'linear-gradient(to bottom, black 60%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent)' }}>
+      <nav style={{ padding: '1.5rem 2rem', position: 'fixed', width: '100%', top: 0, zIndex: 100, background: 'linear-gradient(to bottom, rgba(8,12,20,0.95), transparent)', backdropFilter: 'blur(10px)', maskImage: 'linear-gradient(to bottom, black 60%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent)' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontFamily: "'Deltha', sans-serif", fontSize: '1.5rem', letterSpacing: '0.15em', color: 'var(--color-text-primary)' }}>
             HANBEE
@@ -683,7 +719,7 @@ function App() {
 
       <main>
         {/* Cinematic Hero Section */}
-        <section ref={heroRef} style={{ height: '100vh', width: '100vw', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: '#010409' }}>
+        <section ref={heroRef} style={{ height: '100vh', width: '100vw', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: 'transparent' }}>
           
           {/* Giant HANBEE Background Text */}
           <div style={{
@@ -717,38 +753,129 @@ function App() {
           </div>
 
           {/* 3D Showroom Canvas */}
-          <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-            <Canvas
-              frameloop={heroInView ? 'always' : 'demand'}
-              camera={{ position: [0, 1, 6], fov: 55 }}
-              dpr={[1, 1.5]}
-              gl={{ antialias: true, powerPreference: 'high-performance' }}
-            >
-              <Suspense fallback={null}>
-                <Hero3DScene isReady={!isLoading} />
-              </Suspense>
-            </Canvas>
+          <div style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            zIndex: 1,
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 85%, transparent 100%)'
+          }}>
+            <CanvasErrorBoundary>
+              <Canvas
+                frameloop={heroInView ? 'always' : 'demand'}
+                camera={{ position: [0, 1, 6], fov: 55 }}
+                dpr={[1, 1.5]}
+                gl={{ antialias: true, powerPreference: 'high-performance' }}
+                onCreated={({ gl }) => {
+                  gl.domElement.addEventListener('webglcontextlost', (e) => {
+                    e.preventDefault();
+                    console.warn('WebGL context lost in hero!');
+                  }, false);
+                }}
+              >
+                <Suspense fallback={null}>
+                  <Hero3DScene isReady={!isLoading} />
+                </Suspense>
+              </Canvas>
+            </CanvasErrorBoundary>
           </div>
 
-          {/* Bottom gradient fade */}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '15%', zIndex: 2, pointerEvents: 'none', background: 'linear-gradient(to top, #010409 0%, transparent 100%)' }} />
+
         </section>
 
-        {/* Where HANBEE Works */}
-        <section style={{ padding: '8rem 0', background: 'rgba(255,255,255,0.01)' }}>
-          <div className="container">
-            <SectionHeading
-              title="Where HANBEE works."
-              subtitle="One robot. Six industries. Deployed across the spaces where people work, heal, and live."
-            />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', maxWidth: '800px', margin: '0 auto' }}>
-              {['Healthcare', 'Hospitality', 'Retail', 'Warehousing', 'Education', 'Corporate'].map(ind => (
-                <div key={ind} className="glass-panel" style={{ padding: '1rem 2rem', borderRadius: '30px', fontWeight: '600', color: 'var(--color-text-secondary)' }}>
-                  {ind}
-                </div>
-              ))}
-            </div>
+        {/* Core Value Proposition / Made in India */}
+        <section style={{ 
+          position: 'relative', 
+          padding: '10rem 2rem', 
+          background: 'transparent',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          overflow: 'hidden'
+        }}>
+          {/* Circuit Lines Background */}
+          <div style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            opacity: 0.15, 
+            pointerEvents: 'none',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 100%)'
+          }}>
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="dark-circuit" width="120" height="120" patternUnits="userSpaceOnUse">
+                  <path d="M 0 60 l 30 0 l 20 -20 l 40 0 l 20 20 m -40 0 l 15 15 l 25 0 m -110 30 l 20 0 l 15 -15 l 30 0" fill="none" stroke="var(--color-accent-primary)" strokeWidth="1" />
+                  <circle cx="90" cy="40" r="2.5" fill="var(--color-accent-primary)" />
+                  <circle cx="50" cy="60" r="2.5" fill="var(--color-accent-primary)" />
+                  <circle cx="65" cy="75" r="2.5" fill="var(--color-accent-primary)" />
+                </pattern>
+                <radialGradient id="circuit-fade" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="1"/>
+                  <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+                </radialGradient>
+                <mask id="circuit-mask">
+                  <rect width="100%" height="100%" fill="url(#circuit-fade)" />
+                </mask>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#dark-circuit)" mask="url(#circuit-mask)" />
+            </svg>
           </div>
+          
+          <motion.div 
+            style={{ position: 'relative', zIndex: 1, maxWidth: '1000px' }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+            }}
+          >
+            <motion.div 
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
+              style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: 500, 
+                color: 'var(--color-accent-primary)', 
+                marginBottom: '1.5rem',
+                letterSpacing: '0.05em'
+              }}
+            >
+              Made in India
+            </motion.div>
+            
+            <motion.h2 
+              variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
+              style={{ 
+                fontSize: 'clamp(3.5rem, 7vw, 6.5rem)', 
+                fontWeight: 800, 
+                lineHeight: 1.05, 
+                color: 'var(--color-text-primary)', 
+                marginBottom: '2.5rem',
+                letterSpacing: '-0.03em'
+              }}
+            >
+              One robot.<br />Every industry.
+            </motion.h2>
+            
+            <motion.p 
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
+              style={{ 
+                fontSize: 'clamp(1.2rem, 2vw, 1.6rem)', 
+                lineHeight: 1.6, 
+                color: 'var(--color-text-secondary)', 
+                maxWidth: '850px', 
+                margin: '0 auto',
+                fontWeight: 400,
+                fontFamily: "'Georgia', serif"
+              }}
+            >
+              Intelligent robots that handle delivery, service, and logistics - reducing staff 
+              workload by 40% across healthcare, hospitality, retail, and more.
+            </motion.p>
+          </motion.div>
         </section>
 
         {/* Detailed Industry Sections */}
@@ -756,7 +883,7 @@ function App() {
           <ProductShowcase
             industry="HEALTHCARE"
             title="Free your nurses. HANBEE handles the rest."
-            description="Medicine rounds, lab sample transport, linen delivery - HANBEE takes on the routine so your staff can focus entirely on patient care."
+            description="Medicine rounds, lab sample transport, linen delivery - HANBEE takes on the routine so your staff can focus entirely on patient care. (Feel free to rotate and interact with the 3D model!)"
             model="/models/FINAL_HOSPITAL-v1.glb"
             metrics={[
               { value: "40%", label: "Less workload" },
@@ -771,7 +898,7 @@ function App() {
           <ProductShowcase
             industry="HOSPITALITY"
             title="Five-star service. Without the five-star cost."
-            description="Room service, amenity delivery, lobby assistance - HANBEE works silently around the clock, adding a premium touch to every guest interaction."
+            description="Room service, amenity delivery, lobby assistance - HANBEE works silently around the clock, adding a premium touch to every guest interaction. (Feel free to rotate and interact with the 3D model!)"
             model="/models/FINAL_RESTAURANT-v1.glb"
             metrics={[
               { value: "3×", label: "Faster delivery" },
@@ -786,7 +913,7 @@ function App() {
           <ProductShowcase
             industry="QUEUE MANAGEMENT"
             title="TokenFlow Lite. Smart Queue. Simple Solution."
-            description="Eliminate waiting area chaos. TokenFlow seamlessly directs customers and instantly orchestrates HANBEE robot deployment based on live queue data."
+            description="Eliminate waiting area chaos. TokenFlow seamlessly directs customers and instantly orchestrates HANBEE robot deployment based on live queue data. (Feel free to rotate and interact with the 3D model!)"
             model="/models/FINAL_TOKENFLOW_MODEL-v1.glb"
             modelPosition={[0, -3.5, 0]}
             metrics={[
@@ -854,7 +981,7 @@ function App() {
         </section>
 
         {/* Day One Timeline */}
-        <section style={{ padding: '8rem 0', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)' }}>
+        <section style={{ padding: '8rem 0', background: 'transparent' }}>
           <div className="container">
             <SectionHeading
               title="From unboxing to operational - before dinner."
@@ -923,10 +1050,10 @@ function App() {
             <a href="mailto:info@hanbee.in" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>info@hanbee.in</a>
             <a href="tel:+919344477512" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>+91 9344477512</a>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
-              <a href="#" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
+              <a href="https://www.instagram.com/hanbee.in?igsh=b2thYzA4Mm05enNk" target="_blank" rel="noreferrer" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
               </a>
-              <a href="#" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
+              <a href="https://www.linkedin.com/company/hanbee-india/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-text-secondary)', transition: 'color 0.2s' }} onMouseOver={(e) => e.currentTarget.style.color = '#fff'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
               </a>
             </div>

@@ -467,11 +467,11 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
   }, [inView]);
 
   return (
-    <div ref={sectionRef} style={{ position: 'relative', minHeight: '100vh', width: '100%', display: 'flex', alignItems: 'center' }}>
+    <div ref={sectionRef} className="product-showcase-container" style={{ position: 'relative', minHeight: '100vh', width: '100%', display: 'flex', alignItems: 'center' }}>
 
       {/* Immersive 3D Background - Offset to place model on left/right seamlessly */}
       {model && hasMounted && (
-        <div style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
+        <div className="product-showcase-canvas-wrapper" style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
           <CanvasErrorBoundary>
             <Canvas
               frameloop={inView ? 'always' : 'demand'}
@@ -498,8 +498,9 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
       )}
 
       {/* Foreground Content */}
-      <div className="container" style={{ position: 'relative', zIndex: 10, display: 'flex', justifyContent: textAlignment, pointerEvents: 'none' }}>
+      <div className="container product-showcase-text-wrapper" style={{ position: 'relative', zIndex: 10, display: 'flex', justifyContent: textAlignment, pointerEvents: 'none' }}>
         <motion.div 
+          className="product-showcase-text-wrapper"
           style={{ width: '45%', pointerEvents: 'auto' }}
           initial="hidden"
           whileInView="visible"
@@ -520,7 +521,7 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
               <MousePointer2 size={16} /> Feel free to grab and rotate the 3D model to look around!
             </span>
           </motion.p>
-          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem' }}>
+          <motion.div className="product-showcase-stats" variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem' }}>
             {metrics.map((m, i) => (
               <MetricCard key={i} value={m.value} label={m.label} />
             ))}
@@ -702,8 +703,8 @@ function App() {
             HANBEE
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', color: 'var(--color-text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>
-            <motion.a whileHover={{ color: '#ffffff' }} href="#healthcare" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Healthcare</motion.a>
-            <motion.a whileHover={{ color: '#ffffff' }} href="#hospitality" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Hospitality</motion.a>
+            <motion.a className="nav-mobile-hide" whileHover={{ color: '#ffffff' }} href="#healthcare" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Healthcare</motion.a>
+            <motion.a className="nav-mobile-hide" whileHover={{ color: '#ffffff' }} href="#hospitality" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Hospitality</motion.a>
             <motion.a 
               whileHover={{ scale: 1.03, boxShadow: '0 5px 15px rgba(255, 255, 255, 0.1)' }} 
               whileTap={{ scale: 0.98 }}
@@ -722,7 +723,7 @@ function App() {
         <section ref={heroRef} style={{ height: '100vh', width: '100vw', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: 'transparent' }}>
           
           {/* Giant HANBEE Background Text */}
-          <div style={{
+          <div className="text-huge-mobile" style={{
             position: 'absolute',
             top: '50%',
             left: '0',
@@ -784,7 +785,7 @@ function App() {
         </section>
 
         {/* Core Value Proposition / Made in India */}
-        <section style={{ 
+        <section className="padding-mobile" style={{ 
           position: 'relative', 
           padding: '10rem 2rem', 
           background: 'transparent',
@@ -847,6 +848,7 @@ function App() {
             </motion.div>
             
             <motion.h2 
+              className="text-h2-mobile"
               variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}
               style={{ 
                 fontSize: 'clamp(3.5rem, 7vw, 6.5rem)', 
@@ -932,7 +934,7 @@ function App() {
               title="Simple to deploy. Impossible to live without."
               subtitle="Most automation is complex, expensive, and slow to roll out. HANBEE is the opposite - operational in a single day, with zero disruption to your team."
             />
-            <div style={{ display: 'flex', gap: '2rem', marginTop: '4rem' }}>
+            <div className="flex-col-mobile" style={{ display: 'flex', gap: '2rem', marginTop: '4rem' }}>
               <StepCard
                 number="01"
                 title="We come to you."
@@ -961,7 +963,7 @@ function App() {
             title="Not just a robot. A system that thinks with you."
             subtitle="HANBEE doesn't just follow instructions - it navigates, adapts, and works independently so your team never has to babysit it."
           />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+          <div className="grid-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
             <FeatureCard
               icon={Navigation}
               title="360° obstacle detection"
@@ -1036,7 +1038,7 @@ function App() {
       </main>
 
       <footer style={{ borderTop: '1px solid var(--glass-border)', padding: '6rem 0', background: 'var(--color-bg-primary)' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: '2rem', color: 'var(--color-text-primary)' }}>
+        <div className="container grid-mobile" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: '2rem', color: 'var(--color-text-primary)' }}>
           {/* Logo Column */}
           <div style={{ display: 'flex', alignItems: 'flex-start' }}>
             <div style={{ fontFamily: "'Deltha', sans-serif", fontSize: '2.5rem', letterSpacing: '0.2em', color: 'var(--color-text-primary)', marginTop: '-0.5rem' }}>
@@ -1106,7 +1108,7 @@ function CalendarIcon({ size, color }: { size: number; color: string }) {
 
 function TimelineItem({ time, title, description, icon }: { time: string; title: string; description: string; icon: string | React.ReactNode }) {
   return (
-    <div className="glass-panel" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
+    <div className="glass-panel timeline-item-mobile" style={{ padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
       <div style={{ width: '120px', fontSize: '1.2rem', fontWeight: '700', color: 'var(--color-accent-primary)', flexShrink: 0 }}>
         {time}
       </div>

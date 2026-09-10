@@ -665,7 +665,7 @@ function App() {
           <div style={{ fontFamily: "'Deltha', sans-serif", fontSize: '1.5rem', letterSpacing: '0.15em', color: 'var(--color-text-primary)' }}>
             HANBEE
           </div>
-          <div style={{ display: 'flex', gap: '2.5rem', color: 'var(--color-text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem', color: 'var(--color-text-secondary)', fontSize: '0.9rem', fontWeight: '600' }}>
             <motion.a whileHover={{ color: '#ffffff' }} href="#healthcare" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Healthcare</motion.a>
             <motion.a whileHover={{ color: '#ffffff' }} href="#hospitality" style={{ transition: 'color 0.3s', textDecoration: 'none', color: 'inherit' }}>Hospitality</motion.a>
             <motion.a 
@@ -673,7 +673,7 @@ function App() {
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
               href="https://hanbee.in/enquiry-form" target="_blank" rel="noreferrer" className="glass-panel" 
-              style={{ padding: '0.5rem 1.5rem', borderRadius: '20px', color: '#fff', textDecoration: 'none' }}
+              style={{ padding: '0.5rem 1.5rem', borderRadius: '20px', color: '#fff', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             >
               Book Demo
             </motion.a>

@@ -255,6 +255,8 @@ function ShowroomPlatform() {
   );
 }
 
+let globalHeroStartTime: number | null = null;
+
 function Hero3DScene({ isReady }: { isReady: boolean }) {
   const tokenflow = useGLTF('/models/FINAL_TOKENFLOW_MODEL-v1.glb');
   const hospital = useGLTF('/models/FINAL_HOSPITAL-v1.glb');
@@ -265,16 +267,15 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
   const restaurantRef = useRef<THREE.Group>(null);
   const sweepLightRef = useRef<THREE.SpotLight>(null);
   const rimLightRef = useRef<THREE.SpotLight>(null);
-  const startTimeRef = useRef<number | null>(null);
 
   useFrame((state) => {
     if (!isReady) return; // Wait until loading screen is fully gone
     
-    if (startTimeRef.current === null) {
-      startTimeRef.current = state.clock.getElapsedTime();
+    if (globalHeroStartTime === null) {
+      globalHeroStartTime = performance.now() / 1000;
     }
     
-    const t = state.clock.getElapsedTime() - startTimeRef.current;
+    const t = (performance.now() / 1000) - globalHeroStartTime;
 
     // Quintic ease-out — ultra smooth, no abrupt deceleration
     const ease5 = (x: number) => 1 - Math.pow(1 - x, 5);
@@ -374,7 +375,7 @@ function Hero3DScene({ isReady }: { isReady: boolean }) {
         scale={25}
         blur={2.5}
         far={5}
-        resolution={512}
+        resolution={1024}
         color="#000000"
       />
 
@@ -440,12 +441,17 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
   const mPos = modelPosition || [0, -6.5, 0];
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { margin: "200px" });
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    if (inView) setHasMounted(true);
+  }, [inView]);
 
   return (
     <div ref={sectionRef} style={{ position: 'relative', minHeight: '100vh', width: '100%', display: 'flex', alignItems: 'center' }}>
 
       {/* Immersive 3D Background - Offset to place model on left/right seamlessly */}
-      {model && (
+      {model && hasMounted && (
         <div style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
           <Canvas
             frameloop={inView ? 'always' : 'demand'}

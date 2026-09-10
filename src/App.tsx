@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import React, { useRef, useState, Suspense, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Environment, SpotLight, ContactShadows, useProgress } from '@react-three/drei';
-import { Battery, WifiOff, Clock, Map, Navigation, Users, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { Battery, WifiOff, Clock, Map, Navigation, Users, ShieldCheck, Zap, ArrowRight, Package, User, MousePointer2 } from 'lucide-react';
 import * as THREE from 'three';
 
 interface NeuralConstellationParticle {
@@ -481,7 +481,7 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
           <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ fontSize: '1.15rem', color: 'var(--color-text-secondary)', lineHeight: '1.7', marginBottom: '3rem' }}>
             {description}
             <span style={{ display: 'flex', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--color-accent-primary)', opacity: 0.85, fontStyle: 'italic', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.2rem' }}>👆</span> Feel free to grab and rotate the 3D model to look around!
+              <MousePointer2 size={16} /> Feel free to grab and rotate the 3D model to look around!
             </span>
           </motion.p>
           <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem' }}>
@@ -862,10 +862,10 @@ function App() {
             />
 
             <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <TimelineItem time="9:00 AM" title="Delivery & setup" description="HANBEE arrives fully assembled. We handle everything." icon="📦" />
-              <TimelineItem time="10:00 AM" title="Floor mapping" description="Your entire facility mapped autonomously in 60 minutes." icon="🗺️" />
-              <TimelineItem time="12:00 PM" title="Staff training" description="30-minute walkthrough. Zero tech experience needed." icon="👤" />
-              <TimelineItem time="2:00 PM" title="First live task" description="HANBEE is on your floor, working, same afternoon." icon="⚡" />
+              <TimelineItem time="9:00 AM" title="Delivery & setup" description="HANBEE arrives fully assembled. We handle everything." icon={<Package size={20} />} />
+              <TimelineItem time="10:00 AM" title="Floor mapping" description="Your entire facility mapped autonomously in 60 minutes." icon={<Map size={20} />} />
+              <TimelineItem time="12:00 PM" title="Staff training" description="30-minute walkthrough. Zero tech experience needed." icon={<User size={20} />} />
+              <TimelineItem time="2:00 PM" title="First live task" description="HANBEE is on your floor, working, same afternoon." icon={<Zap size={20} />} />
             </div>
           </div>
         </section>

@@ -480,6 +480,9 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
           </motion.h3>
           <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ fontSize: '1.15rem', color: 'var(--color-text-secondary)', lineHeight: '1.7', marginBottom: '3rem' }}>
             {description}
+            <span style={{ display: 'flex', marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--color-accent-primary)', opacity: 0.85, fontStyle: 'italic', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>👆</span> Feel free to grab and rotate the 3D model to look around!
+            </span>
           </motion.p>
           <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }} style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem' }}>
             {metrics.map((m, i) => (

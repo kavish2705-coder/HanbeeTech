@@ -474,7 +474,7 @@ function ProductShowcase({ industry, title, description, metrics, reverse, image
         <div className="product-showcase-canvas-wrapper" style={{ position: 'absolute', top: 0, bottom: 0, ...canvasPosition, zIndex: 0, cursor: 'grab' }}>
           <CanvasErrorBoundary>
             <Canvas
-              frameloop={inView ? 'always' : 'demand'}
+              frameloop="always"
               camera={{ position: [0, 0, 18], fov: 45 }}
               dpr={[1, 1.5]}
               gl={{ antialias: true, alpha: true }}
@@ -763,7 +763,7 @@ function App() {
           }}>
             <CanvasErrorBoundary>
               <Canvas
-                frameloop={heroInView ? 'always' : 'demand'}
+                frameloop="always"
                 camera={{ position: [0, 1, 6], fov: 55 }}
                 dpr={[1, 1.5]}
                 gl={{ antialias: true, powerPreference: 'high-performance' }}
